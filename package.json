@@ -4,6 +4,7 @@
   "description": "Client side ethereum wallet",
   "scripts": {
     "build:offline": "WEBPACK_INTEGRITY=false npm run build:hash",
+    "buildonly": "vue-cli-service build",
     "build": "npm run update && vue-cli-service build",
     "test:unit": "vue-cli-service test:unit --logHeapUsage",
     "lint": "npm run lint:code && npm run lint:md",
