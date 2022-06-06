@@ -31,10 +31,31 @@ const initialLoad = function (state) {
   return state.loadingWalletInfo;
 };
 
+const getEmail = function (state) {
+  return state.email;
+};
+const getPin = function (state) {
+  return state.pin;
+};
+const getOTP = function (state) {
+  return state.otp;
+};
+const getOTPRef = function (state) {
+  return state.otpRef;
+};
+const getToken = function (state) {
+  return state.token;
+};
+
 export default {
   balanceInETH,
   balanceInWei,
   totalOwnedDomains,
   tokensList,
-  initialLoad
+  initialLoad,
+  getEmail,
+  getPin,
+  getOTP,
+  getOTPRef,
+  getToken
 };

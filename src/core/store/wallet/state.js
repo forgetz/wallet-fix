@@ -11,7 +11,12 @@ const state = {
   web3: {},
   ensDomains: null,
   tokens: [],
-  loadingWalletInfo: true
+  loadingWalletInfo: true,
+  email: '',
+  pin: '',
+  otp: '',
+  otpRef: '',
+  token: ''
 };
 
 export default state;

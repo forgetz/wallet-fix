@@ -82,6 +82,46 @@
     />
     <!--
     =====================================================================================
+      Access With Email
+    =====================================================================================
+    -->
+    <access-wallet-email
+      v-else-if="walletType === types.EMAIL"
+      :handler-access-wallet="accessHandler"
+      class="mb-6"
+      @unlock="unlockWallet"
+    />
+     <!--
+    =====================================================================================
+      Access With PIN
+    =====================================================================================
+    -->
+    <access-wallet-pin
+      v-else-if="walletType === types.PIN"
+      :handler-access-wallet="accessHandler"
+      class="mb-6"
+      @unlock="unlockWallet"
+    />
+    <!--
+    =====================================================================================
+      Access With Mobile
+    =====================================================================================
+    -->
+    <access-wallet-mobile
+      v-else-if="walletType === types.MOBILE"
+      :handler-access-wallet="accessHandler"
+      class="mb-6"
+      @unlock="unlockWallet"
+    />
+
+    <access-wallet-mobile-otp
+      v-else-if="walletType === types.MOBILE_OTP"
+      :handler-access-wallet="accessHandler"
+      class="mb-6"
+      @unlock="unlockWallet"
+    />
+    <!--
+    =====================================================================================
       Warning
     =====================================================================================
     -->
@@ -98,6 +138,10 @@
 import AccessWalletKeystore from './software/components/AccessWalletKeystore';
 import AccessWalletMnemonic from './software/components/AccessWalletMnemonic';
 import AccessWalletPrivateKey from './software/components/AccessWalletPrivateKey';
+import AccessWalletEmail from './software/components/AccessWalletEmail';
+import AccessWalletMobile from './software/components/AccessWalletMobile';
+import AccessWalletMobileOtp from './software/components/AccessWalletMobileOTP';
+import AccessWalletPin from './software/components/AccessWalletPin';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { Toast, ERROR } from '@/modules/toast/handler/handlerToast';
 import { SOFTWARE_WALLET_TYPES } from './software/handlers/helpers';
@@ -110,7 +154,11 @@ export default {
   components: {
     AccessWalletKeystore,
     AccessWalletMnemonic,
-    AccessWalletPrivateKey
+    AccessWalletPrivateKey,
+    AccessWalletEmail,
+    AccessWalletMobile,
+    AccessWalletMobileOtp,
+    AccessWalletPin
   },
   mixins: [handlerAnalytics],
   props: {
@@ -140,6 +188,29 @@ export default {
         url: ''
       },
       buttons: [
+        /* Email */
+        {
+          label: 'Email',
+          icon: require('@/assets/images/icons/icon-private-key-grey.png'),
+          fn: () => {
+            this.setType(SOFTWARE_WALLET_TYPES.EMAIL);
+          }
+        },
+        /* Mobile */
+        // {
+        //   label: 'Mobile',
+        //   icon: require('@/assets/images/icons/icon-private-key-grey.png'),
+        //   fn: () => {
+        //     this.setType(SOFTWARE_WALLET_TYPES.MOBILE);
+        //   }
+        // },
+        {
+          label: 'Pin',
+          icon: require('@/assets/images/icons/icon-keystore-file.svg'),
+          fn: () => {
+            this.setType(SOFTWARE_WALLET_TYPES.PIN);
+          }
+        },
         /* Keystore Button */
         {
           label: 'Keystore',
@@ -195,6 +266,14 @@ export default {
           return 'Access Wallet with Mnemonic Phrase';
         case SOFTWARE_WALLET_TYPES.PRIVATE_KEY:
           return 'Access Wallet with Private Key';
+        case SOFTWARE_WALLET_TYPES.EMAIL:
+          return 'Access Wallet with Email';
+        case SOFTWARE_WALLET_TYPES.MOBILE:
+          return 'Access Wallet with Mobile';
+        case SOFTWARE_WALLET_TYPES.MOBILE_OTP:
+          return 'Access Wallet with Mobile';
+        case SOFTWARE_WALLET_TYPES.PIN:
+          return 'Enter PIN';
         default:
           return 'Select Software Wallet';
       }

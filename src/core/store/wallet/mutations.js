@@ -8,6 +8,8 @@ const REMOVE_WALLET = function (state) {
   state.address = null;
   state.isHardware = false;
   state.identifier = '';
+  state.email = '';
+  state.pin = '';
 };
 
 const SET_WALLET = function (state, wallet) {
@@ -50,6 +52,26 @@ const SET_OFFLINE_APP = function (state, isOfflineApp) {
   state.isOfflineApp = isOfflineApp;
 };
 
+const SET_EMAIL = function (state, email) {
+  state.email = email;
+};
+
+const SET_PIN = function (state, pin) {
+  state.email = pin;
+};
+
+const SET_OTP = function (state, otp) {
+  state.otp = otp;
+};
+
+const SET_OTP_REF = function (state, otpRef) {
+  state.otpRef = otpRef;
+};
+
+const SET_TOKEN = function (state, token) {
+  state.token = token;
+};
+
 export default {
   REMOVE_WALLET,
   SET_WALLET,
@@ -60,5 +82,10 @@ export default {
   SET_OWNED_DOMAINS,
   SET_TOKENS,
   SET_LOADING_WALLET_INFO,
-  SET_OFFLINE_APP
+  SET_OFFLINE_APP,
+  SET_EMAIL,
+  SET_PIN,
+  SET_OTP,
+  SET_OTP_REF,
+  SET_TOKEN
 };

@@ -4,7 +4,12 @@ const SOFTWARE_WALLET_TYPES = {
   KEYSTORE: 'keystore',
   MNEMONIC: 'mnemonic',
   PRIVATE_KEY: 'private-key',
-  OVERVIEW: 'overview'
+  OVERVIEW: 'overview',
+  EMAIL: 'email',
+  EMAIL_OTP: 'email-otp',
+  MOBILE: 'mobile',
+  MOBILE_OTP: 'mobile-otp',
+  PIN: 'pin'
 };
 
 const isPrivateKey = key => {

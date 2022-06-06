@@ -9,5 +9,6 @@ module.exports = {
     '0xDECAF9CD2367cdbb726E904cD6397eDFcAe6068D'
   ),
   FULL_SOURCEMAPS: JSON.stringify(process.env.FULL_SOURCEMAPS || 'false'),
-  BUILD: JSON.stringify(process.env.BUILD || 'web')
+  BUILD: JSON.stringify(process.env.BUILD || 'web'),
+  AUTH_WS_ENDPOINT: JSON.stringify(process.env.AUTH_WS_ENDPOINT)
 };

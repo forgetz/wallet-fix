@@ -7,5 +7,6 @@ export default {
   CHR: 'CHR',
   SGD: 'SGD',
   RUB: 'RUB',
-  RMB: 'RMB'
+  RMB: 'RMB',
+  THB: 'THB'
 };

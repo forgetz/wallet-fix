@@ -119,6 +119,26 @@ const setOfflineApp = function ({ commit }, val) {
   commit('SET_OFFLINE_APP', val);
 };
 
+const setEmail = function ({ commit }, val) {
+  commit('SET_EMAIL', val);
+};
+
+const setPin = function ({ commit }, val) {
+  commit('SET_PIN', val);
+};
+
+const setOTP = function ({ commit }, val) {
+  commit('SET_OTP', val);
+};
+
+const setOTPRef = function ({ commit }, val) {
+  commit('SET_OTP_REF', val);
+};
+
+const setToken = function ({ commit }, val) {
+  commit('SET_TOKEN', val);
+};
+
 export default {
   removeWallet,
   setWallet,
@@ -128,5 +148,10 @@ export default {
   setBlockNumber,
   setOwnedDomains,
   setTokens,
-  setOfflineApp
+  setOfflineApp,
+  setEmail,
+  setPin,
+  setOTP,
+  setOTPRef,
+  setToken
 };
