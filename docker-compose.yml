@@ -1,0 +1,21 @@
+version: '3.8'
+x-logging:
+  &default-logging
+  options:
+    max-size: '1g'
+    max-file: '1'
+  driver: json-file
+
+services:
+  x-wallet:
+    container_name: x-wallet
+    image: nginx:alpine
+    restart: always
+    logging: *default-logging
+    environment:
+      - TZ=Asia/Bangkok
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+      - ./dist:/usr/share/nginx/html
+    ports:
+      - 3030:80

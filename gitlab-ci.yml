@@ -1,0 +1,12 @@
+stages:
+  - deploy
+
+deploy-x-wallet:
+  image: docker/compose
+  stage: deploy
+  tags:
+    - x-wallet
+  script:
+    - docker-compose up -d
+  only:
+    - main
