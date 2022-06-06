@@ -7,6 +7,6 @@ deploy-x-wallet:
   tags:
     - x-wallet
   script:
-    - docker-compose up -d
+    - docker-compose up -d --force-recreate
   only:
     - main
