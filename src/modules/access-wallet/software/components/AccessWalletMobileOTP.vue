@@ -118,7 +118,7 @@ export default {
 
       axios({
         method: 'post',
-        url: 'http://65.21.76.96:3077/verify_otp',
+        url: 'https://api-wallet.abx.one/verify_otp',
         data: { 
           email: this.email,
           otp_ref: this.otpRef,
@@ -143,7 +143,7 @@ export default {
     checkUser() {
       axios({
         method: 'post',
-        url: 'http://65.21.76.96:3077/check_user',
+        url: 'https://api-wallet.abx.one/check_user',
         data: { 
           email: this.email,
           token: this.token

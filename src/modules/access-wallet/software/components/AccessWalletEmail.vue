@@ -134,7 +134,7 @@ export default {
 
       axios({
         method: 'post',
-        url: 'http://65.21.76.96:3077/send_otp',
+        url: 'https://api-wallet.abx.one/send_otp',
         data: { email: this.email },
         headers: { 'Content-Type': 'application/json' }
       })
