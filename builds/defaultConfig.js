@@ -5,6 +5,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJS = require('uglify-es');
 const env_vars = require('../ENV_VARS');
 const allowedConnections = require('../connections');
+const fs = require('fs');
+const path = require('path');
 
 const sourceMapsConfig = {
   filename: 'sourcemaps/[file].map'
@@ -20,6 +22,8 @@ const webpackConfig = {
     host: 'localhost',
     hotOnly: true,
     port: 8080,
+    key: fs.readFileSync(path.join(__dirname, '../cert/localhost-key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, '../cert/localhost.pem')),
     headers: {
       'Strict-Transport-Security':
         'max-age=63072000; includeSubdomains; preload',

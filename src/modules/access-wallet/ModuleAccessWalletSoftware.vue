@@ -204,13 +204,6 @@ export default {
         //     this.setType(SOFTWARE_WALLET_TYPES.MOBILE);
         //   }
         // },
-        {
-          label: 'Pin',
-          icon: require('@/assets/images/icons/icon-keystore-file.svg'),
-          fn: () => {
-            this.setType(SOFTWARE_WALLET_TYPES.PIN);
-          }
-        },
         /* Keystore Button */
         {
           label: 'Keystore',

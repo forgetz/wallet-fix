@@ -10,28 +10,11 @@
               >
             </v-flex>
             <v-flex xs12 mt-4>
-              <p class="text-xs-center">
-                กรุณายืนยันรหัสผ่านความปลอดภัย 6 หลัก
+              <p class="text-center">
+                กรุณายืนยันรหัสผ่านความปลอดภัย 6 หลัก {{token}} {{Pin}}
               </p>
             </v-flex>
-            <v-flex xs12 mt-2>
-              <ul class="pwd">
-                <li
-                  class="full"
-                  v-for="(full, j) in Pin.length"
-                  :key="'full' + j"
-                >
-                  &nbsp;
-                </li>
-                <li
-                  class="hollow"
-                  v-for="(hollow, i) in 6 - Pin.length"
-                  :key="'hollow' + i"
-                >
-                  &nbsp;
-                </li>
-              </ul>
-            </v-flex>
+            
             <v-flex xs12 class="text-xs-center mt-2">
               <v-container grid-list-xs px-3>
                 <v-layout row wrap>
@@ -178,7 +161,7 @@
             title="Access Wallet"
             btn-size="xlarge"
             :disabled="!disableBtn"
-            @click.native="unlockBtn"
+            @click.native="nextBtn"
           />
         </v-col>
       </v-row>
@@ -189,6 +172,7 @@
 
 <script>
 
+import axios from 'axios';
 import store from '@/core/store';
 import { isValidPrivate } from 'ethereumjs-util';
 import {
@@ -211,8 +195,9 @@ export default {
       Pin: '',
       email: store.getters['wallet/getEmail'],
       otpRef: store.getters['wallet/getOTPRef'],
+      token: store.getters['wallet/getToken'],
+      isProcess: false,
       otp: '',
-      acceptTerms: true,
       link: {
         title: 'Terms',
         url: 'https://www.myetherwallet.com/terms-of-service'
@@ -228,7 +213,7 @@ export default {
      */
     
     disableBtn() {
-      return this.acceptTerms && this.isValidOTP;
+      return this.isValidOTP && !this.isProcess;
     },
     /**
      * Property validates whether or not entered private key is valid
@@ -265,12 +250,48 @@ export default {
       this.Pin = this.Pin.substring(0, this.Pin.length - 1);
     },
      
-    unlockBtn() {
-      console.log('unlock')
+    nextBtn() {
+      console.log('nextBtn')
       
       // this.handlerAccessWallet.unlockPrivateKeyWallet(this.actualPrivateKey);
       //  this.$emit('unlock');
-      this.otp = '';
+      this.isProcess = true;
+
+      axios({
+        method: 'post',
+        url: 'https://api-wallet.abx.one/verify_pin',
+        data: { 
+          email: this.email,
+          token: this.token,
+          pin: this.Pin,
+        },
+        headers: { 'Content-Type': 'application/json' }
+      })
+       .then((res) => {
+          console.log('checkuser', res);
+
+          const response = res.data;
+          const privateKey = response.data.key;
+          const message = response.message;
+
+          console.log('key', privateKey);
+          console.log('msg', message);
+
+          //this.$router.push({ query: { type: 'pin' }});
+          // get otp ref
+
+          this.handlerAccessWallet.unlockPrivateKeyWallet(privateKey);
+          this.$emit('unlock');
+
+          this.isProcess = false;
+        })
+        .catch((e) => {
+          console.log('error', e);
+          this.isProcess = false;
+        });
+
+
+
     }
   }
 };

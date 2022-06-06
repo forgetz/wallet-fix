@@ -68,6 +68,7 @@ export default {
       email: '',
       privateKey: '',
       acceptTerms: false,
+      isProcess: false,
       link: {
         title: 'Terms',
         url: 'https://www.myetherwallet.com/terms-of-service'
@@ -82,24 +83,17 @@ export default {
      * @return boolean
      */
     disableBtn() {
-      return this.acceptTerms && this.isValidEmail && this.isValidMobile;
+      return this.acceptTerms && this.isValidEmail && !this.isProcess;
     },
     /**
      * Property validates whether or not entered private key is valid
      * @return booelan
      */
      isValidEmail() {
-         console.log(this.email)
          return this.email.match(
             /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
          );
      },
-
-     isValidMobile() {
-         console.log(this.mobile)
-         return true;
-     },
-
 
     /**
      * @returns rulles for the email input
@@ -125,12 +119,7 @@ export default {
      */
 
     nextBtn() {
-
-      store.dispatch('wallet/setEmail', this.email, { root: true })
-      store.dispatch('wallet/setOTPRef', 'ABCDEF', { root: true })
-      this.email = '';
-      this.$router.push({ query: { type: 'mobile-otp' }});
-      //return;
+      this.isProcess = true;
 
       axios({
         method: 'post',
@@ -138,15 +127,21 @@ export default {
         data: { email: this.email },
         headers: { 'Content-Type': 'application/json' }
       })
-        .then(() => {
+        .then((res) => {
+
+          const response = res.data.data;
+          const otpRef = response.OTP_ref;
+
           store.dispatch('wallet/setEmail', this.email, { root: true })
+          store.dispatch('wallet/setOTPRef', otpRef, { root: true })
+
           this.email = '';
           this.$router.push({ query: { type: 'mobile-otp' }});
-
-          // get otp ref
+          this.isProcess = false;
         })
         .catch((e) => {
-          console.log(e);
+          console.log('error', e);
+          this.isProcess = false;
         });
     }
   }

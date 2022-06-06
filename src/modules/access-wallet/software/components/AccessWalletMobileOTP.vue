@@ -1,13 +1,13 @@
 <template>
   <div class="full-width">
-    <h3 class="mb-6">Enter your OTP we send to {{email}} Ref:{{otpRef}}</h3>
+    <h3 class="mb-6">Enter your OTP we send to {{email}} Ref: {{otpRef}}</h3>
     <!--
     =====================================================================================
       Private Key Input
     =====================================================================================
     -->
     <mew-input
-      v-model="mobile"
+      v-model="otp"
       label="OTP"
       placeholder="Enter your otp"
       :rules="otpRulles"
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-
+import axios from 'axios';
 import store from '@/core/store';
 import { isValidPrivate } from 'ethereumjs-util';
 import {
@@ -60,7 +60,7 @@ export default {
       otpRef: store.getters['wallet/getOTPRef'],
       otp: '',
       token: '',
-      acceptTerms: true,
+      isProcess: false,
       link: {
         title: 'Terms',
         url: 'https://www.myetherwallet.com/terms-of-service'
@@ -76,7 +76,7 @@ export default {
      */
 
     disableBtn() {
-      return this.acceptTerms && this.isValidOTP;
+      return this.isValidOTP && !this.isProcess;
     },
     /**
      * Property validates whether or not entered private key is valid
@@ -97,7 +97,7 @@ export default {
     otpRulles() {
       return [
          value => !!value || 'Required',
-         value => this.isValidOTP || 'Please enter valid mobile number'
+         value => this.isValidOTP || 'Please enter valid OTP'
       ];
     }
   },
@@ -107,14 +107,9 @@ export default {
      * Emits to the parent module to enter wallet route
      */
     verifyOtp() {
-      console.log('unlock')
-      
-      // this.handlerAccessWallet.unlockPrivateKeyWallet(this.actualPrivateKey);
-      //  this.$emit('unlock');
+      console.log('verifyOtp')
 
-      
-      this.email = '';
-      this.$router.push({ query: { type: 'mobile-otp' }});
+      this.isProcess = true;
 
       axios({
         method: 'post',
@@ -127,19 +122,24 @@ export default {
         headers: { 'Content-Type': 'application/json' }
       })
         .then((res) => {
-          console.log(res);
+          console.log('res', res);
+          const response = res.data.data;
+          const token = response.user_token;
+          console.log('token', token);
 
-          store.dispatch('wallet/setToken', res.user_token, { root: true })
+          store.dispatch('wallet/setToken', token, { root: true })
+
           this.otp = '';
-          this.token = res.user_token;
-          
-          
+          this.token = token;
+          this.checkUser();
           // get otp ref
         })
         .catch((e) => {
-          console.log(e);
+          console.log('error', e);
+          this.isProcess = false;
         });
     },
+    
     checkUser() {
       axios({
         method: 'post',
@@ -151,17 +151,31 @@ export default {
         headers: { 'Content-Type': 'application/json' }
       })
        .then((res) => {
-          console.log(res);
+          console.log('checkuser', res);
 
-          store.dispatch('wallet/setToken', res.user_token, { root: true })
-          this.otp = '';
+          const response = res.data.data;
+          const pinned = response.pinned;
 
-          this.$router.push({ query: { type: 'pin' }});
-          
+          if (pinned) {
+            console.log('pinned')
+            this.$router.push({ query: { type: 'pin' }});
+            return;
+
+          } else {
+            console.log('not pinned')
+            this.$router.push({ query: { type: 'pin' }});
+            return;
+          }
+
+
+          this.isProcess = false;
+
+          //this.$router.push({ query: { type: 'pin' }});
           // get otp ref
         })
         .catch((e) => {
-          console.log(e);
+          console.log('error', e);
+          this.isProcess = false;
         });
     }
   }
