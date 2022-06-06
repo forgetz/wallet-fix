@@ -12,10 +12,11 @@ services:
     image: nginx:alpine
     restart: always
     logging: *default-logging
+    network_mode: host
     environment:
       - TZ=Asia/Bangkok
     volumes:
       - ./conf.d:/etc/nginx/conf.d
       - ./dist:/usr/share/nginx/html
-    ports:
-      - 3030:80
+#    ports:
+#      - 3030:80
