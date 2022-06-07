@@ -102,6 +102,13 @@
       class="mb-6"
       @unlock="unlockWallet"
     />
+
+    <access-wallet-create-pin
+      v-else-if="walletType === types.CREATE_PIN"
+      :handler-access-wallet="accessHandler"
+      class="mb-6"
+      @unlock="unlockWallet"
+    />
     <!--
     =====================================================================================
       Access With Mobile
@@ -142,6 +149,7 @@ import AccessWalletEmail from './software/components/AccessWalletEmail';
 import AccessWalletMobile from './software/components/AccessWalletMobile';
 import AccessWalletMobileOtp from './software/components/AccessWalletMobileOTP';
 import AccessWalletPin from './software/components/AccessWalletPin';
+import AccessWalletCreatePin from './software/components/AccessWalletCreatePin';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { Toast, ERROR } from '@/modules/toast/handler/handlerToast';
 import { SOFTWARE_WALLET_TYPES } from './software/handlers/helpers';
@@ -158,7 +166,8 @@ export default {
     AccessWalletEmail,
     AccessWalletMobile,
     AccessWalletMobileOtp,
-    AccessWalletPin
+    AccessWalletPin,
+    AccessWalletCreatePin
   },
   mixins: [handlerAnalytics],
   props: {
@@ -267,6 +276,8 @@ export default {
           return 'Access Wallet with Mobile';
         case SOFTWARE_WALLET_TYPES.PIN:
           return 'Enter PIN';
+        case SOFTWARE_WALLET_TYPES.CREATE_PIN:
+          return 'Create PIN';
         default:
           return 'Select Software Wallet';
       }

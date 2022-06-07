@@ -9,7 +9,8 @@ const SOFTWARE_WALLET_TYPES = {
   EMAIL_OTP: 'email-otp',
   MOBILE: 'mobile',
   MOBILE_OTP: 'mobile-otp',
-  PIN: 'pin'
+  PIN: 'pin',
+  CREATE_PIN: 'create-pin'
 };
 
 const isPrivateKey = key => {

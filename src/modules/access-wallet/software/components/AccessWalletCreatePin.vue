@@ -1,18 +1,23 @@
 <template>
   <div class="full-width">
-    <h3 class="mb-6">Enter your OTP we send to {{email}} Ref: {{otpRef}}</h3>
-    <!--
-    =====================================================================================
-      Private Key Input
-    =====================================================================================
-    -->
+
+
     <mew-input
-      v-model="otp"
-      label="OTP"
-      placeholder="Enter your otp"
-      :rules="otpRulles"
-      type="number"
+      v-model="pin"
+      label="Pin"
+      placeholder="Enter your Pin"
+      :rules="pinRules"
+      type="text"
     />
+
+    <mew-input
+      v-model="confirmpin"
+      label="Confirm Pin"
+      placeholder="Confirm your Pin"
+      :rules="pinRules"
+      type="text"
+    />
+
 
     <!--
     =====================================================================================
@@ -24,18 +29,20 @@
         <v-col cols="12" sm="4">
           <mew-button
             has-full-width
-            title="Verify OTP"
+            title="Access Wallet"
             btn-size="xlarge"
             :disabled="!disableBtn"
-            @click.native="verifyOtp"
+            @click.native="nextBtn"
           />
         </v-col>
       </v-row>
     </div>
+    
   </div>
 </template>
 
 <script>
+
 import axios from 'axios';
 import store from '@/core/store';
 import { isValidPrivate } from 'ethereumjs-util';
@@ -45,7 +52,7 @@ import {
 } from '../../../access-wallet/common/helpers';
 import { isString } from 'lodash';
 export default {
-  name: 'AccessWalletMobileOtp',
+  name: 'AccessWalletCreatePin',
   props: {
     handlerAccessWallet: {
       type: Object,
@@ -56,10 +63,11 @@ export default {
   },
   data() {
     return {
+      pin: '',
+      confirmpin: '',
       email: store.getters['wallet/getEmail'],
       otpRef: store.getters['wallet/getOTPRef'],
-      otp: '',
-      token: '',
+      token: store.getters['wallet/getToken'],
       isProcess: false,
       link: {
         title: 'Terms',
@@ -74,17 +82,17 @@ export default {
      * private key entered is valid
      * @return boolean
      */
-
+    
     disableBtn() {
-      return this.isValidOTP && !this.isProcess;
+      return this.isValidPin && !this.isProcess && this.pin == this.confirmpin;
     },
     /**
      * Property validates whether or not entered private key is valid
      * @return booelan
      */
-    isValidOTP() {
-        console.log(this.otp)
-        return this.otp.match(
+    isValidPin() {
+        console.log(this.pin)
+        return this.pin.match(
           /^[0-9]*$/
         );
         return true;
@@ -94,10 +102,10 @@ export default {
      * @returns rulles for the email input
      */
 
-    otpRulles() {
+    pinRules() {
       return [
          value => !!value || 'Required',
-         value => this.isValidOTP || 'Please enter valid OTP'
+         value => this.isValidPin || 'Please enter valid mobile number'
       ];
     }
   },
@@ -106,77 +114,73 @@ export default {
      * Method unlocks private key wallet,
      * Emits to the parent module to enter wallet route
      */
-    verifyOtp() {
-      console.log('verifyOtp')
 
+    nextBtn() {
+      console.log('nextBtn')
+      
+      // this.handlerAccessWallet.unlockPrivateKeyWallet(this.actualPrivateKey);
+      //  this.$emit('unlock');
       this.isProcess = true;
 
       axios({
         method: 'post',
-        url: 'https://api-wallet.abx.one/verify_otp',
+        url: 'https://api-wallet.abx.one/set_new_pin',
         data: { 
           email: this.email,
-          otp_ref: this.otpRef,
-          otp: this.otp
+          token: this.token,
+          pin: this.pin,
         },
         headers: { 'Content-Type': 'application/json' }
       })
-        .then((res) => {
-          console.log('res', res);
-          const response = res.data.data;
-          const token = response.user_token;
-          console.log('token', token);
+       .then((res) => {
+          console.log('set_new_pin', res);
 
-          store.dispatch('wallet/setToken', token, { root: true })
+          const response = res.data;
+          if (response.message == 'success.') {
+            this.verifyPin();
+          }
 
-          this.otp = '';
-          this.token = token;
-          this.checkUser();
-          // get otp ref
         })
         .catch((e) => {
           console.log('error', e);
           this.isProcess = false;
         });
+
     },
-    
-    checkUser() {
-      axios({
+    verifyPin() {
+       axios({
         method: 'post',
-        url: 'https://api-wallet.abx.one/check_user',
+        url: 'https://api-wallet.abx.one/verify_pin',
         data: { 
           email: this.email,
-          token: this.token
+          token: this.token,
+          pin: this.pin,
         },
         headers: { 'Content-Type': 'application/json' }
       })
        .then((res) => {
           console.log('checkuser', res);
 
-          const response = res.data.data;
-          const pinned = response.pinned;
+          const response = res.data;
+          const privateKey = response.data.key;
+          const message = response.message;
 
-          if (pinned) {
-            console.log('pinned')
-            this.$router.push({ query: { type: 'pin' }});
-            return;
-
-          } else {
-            console.log('not pinned')
-            this.$router.push({ query: { type: 'create-pin' }});
-            return;
-          }
-
-
-          this.isProcess = false;
+          console.log('key', privateKey);
+          console.log('msg', message);
 
           //this.$router.push({ query: { type: 'pin' }});
           // get otp ref
+
+          this.handlerAccessWallet.unlockPrivateKeyWallet(privateKey);
+          this.$emit('unlock');
+
+          this.isProcess = false;
         })
         .catch((e) => {
           console.log('error', e);
           this.isProcess = false;
         });
+
     }
   }
 };
